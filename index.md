@@ -88,7 +88,7 @@ __Outbound Endpoint:__
 
 # Traffic Flow
 
-The following diagram shows the traffic flow when on-premises server triggers a DNS query. In this case, a spoke network 1 attempt to resolve DNS.
+The following diagram shows the traffic flow when on-premises server triggers a DNS query.
  
  ![DPR Architecture](https://raw.githubusercontent.com/moorthyannadurai/AzureDNSPrivateResolver/gh-pages/Slide2.JPG)
  
