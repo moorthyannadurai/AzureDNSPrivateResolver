@@ -38,6 +38,7 @@ Here are the features and key advantages that Azure DNS Private Resolver brings 
 # Architecture
 The following diagram illustrates how a hybrid network looks using Azure DNS Private Resolver:
 
+![DPR Architecture](https://github.com/moorthyannadurai/AzureDNSPrivateResolver/blob/gh-pages/DPR.jpg)
 
 
 # Components
@@ -78,9 +79,11 @@ On-premises networks represent customer datacenters that are connected to Azure 
 - As shown in the picture, these spoke VNets are linked to Private DNS zone names to resolve private endpoint link services (such as privatelink.blob.core.windows.net).
 
 
-## Traffic Flow
+# Traffic Flow
 
 The following diagram shows the traffic flow when on-premises server triggers a DNS query. In this case, a spoke network 1 attempt to resolve DNS.
+ 
+ ![DPR Architecture](https://github.com/moorthyannadurai/AzureDNSPrivateResolver/blob/gh-pages/DPR%203.jpg)
  
 - On Prem servers query Azure Private DNS records (ex. blob.core.windows.net).
 - DNS query requests are sent to local DNS server (192.168.0.1 / 2) (all on-premises computers point to local DNS server (192.168.0.1))
@@ -90,6 +93,7 @@ The following diagram shows the traffic flow when on-premises server triggers a 
 
 The following diagram shows the traffic flow when VM 1 triggers a DNS query. In this case, a spoke network 1 attemp to resolve DNS.
 
+![DPR Architecture](https://github.com/moorthyannadurai/AzureDNSPrivateResolver/blob/gh-pages/DPR%202.jpg)
 
 - One of the VMs (VM 1) queries a DNS record.
 - Since Azure Provided DNS is configured on the spoke VNets, any DNS queries from the spokes will be directed to Azure DNS
@@ -103,7 +107,7 @@ The following diagram shows the traffic flow when VM 1 triggers a DNS query. In 
 
 
 
-## Considerations
+# Considerations
 
 The following points should be taken into account when implementing this solution:
 
@@ -148,7 +152,7 @@ Overview of how reverse DNS works, and scenarios in which Azure DNS supports , a
 Traditionally, DNS records map a DNS name to an IP address, for example www.contoso.com resolves to 64.4.6.100. Reverse DNS is the opposite, where an IP address is mapped back to a name. For example, a lookup of 64.4.6.100 resolves to www.contoso.com.
 
 
-## Next steps
+# Next steps
 
 
 [What is a virtual network link?](https://docs.microsoft.com/en-us/azure/dns/private-dns-virtual-network-links)
