@@ -53,8 +53,8 @@ Note: The administrator must create all Local DNS and Azure endpoints on these s
 
 - App1.onprem.company.com - 192.168.0.8
 - App2.onprem.company.com - 192.168.0.9
-- blob.core.windows.net – 10.0.0.8 (DNS Forwarder record)
-- Azure-api.net – 10.0.0.8 (DNS Forwarder record)
+- privatelink.blob.core.windows.net – 10.0.0.8 (DNS Forwarder record)
+- privatelink.azure-api.net – 10.0.0.8 (DNS Forwarder record)
 	
 	
 ## Hub Network.
