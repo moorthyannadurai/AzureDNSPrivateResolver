@@ -108,7 +108,7 @@ The following diagram shows the traffic flow when VM 1 triggers a DNS query. In 
 - Azure Private DNS is contacted if a query is made for name resolution
 - Else, Azure DNS connects to Azure DNS Private Resolver to check for DNS Forwarding Rules associated with spoke 1 vnet.
 - If yes, the DNS query is scanned through DNS Forwarding Rules for a matching record, then it is forwarded (via Outbound Endpoint) to the IP address stated as part of the matching rule for DNS resolution.
-- If No, Azure DNS is contacted if results are not found.
+- If No, Azure Public DNS is contacted if results are not found.
                 
                 
 Note: Each DNS forwarding rule specifies one or more target DNS servers that are to be used for conditional forwarding, including the Domain Name, Target IP, and Port.
