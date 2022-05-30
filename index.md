@@ -4,7 +4,6 @@ Microsoft has released new Azure DNS Private Resolver service to simplify hybrid
 
 Azure offers various types of DNS solutions, as described below:
 
-Azure offers various types of DNS solutions, as described below:
 - __Azure Public DNS:__ This is the default DNS resolution for all Azure virtual networks and it is maintained and managed by Microsoft.
 
 - __Azure Traffic manager:__ Acts as a DNS-based load balancing service, allowing us to distribute traffic across Azure regions to the public facing applications.
