@@ -104,14 +104,14 @@ The following diagram shows the traffic flow when VM 1 triggers a DNS query. In 
 ![DPR Architecture](https://github.com/moorthyannadurai/AzureDNSPrivateResolver/blob/gh-pages/DPR%202.jpg)
 
 - One of the VMs (VM 1) queries a DNS record.
-- Since Azure Provided DNS is configured on the spoke VNets, any DNS queries from the spokes will be directed to Azure Public DNS
-          Azure Private DNS is contacted if a query is made for name resolution
-          Else, Azure DNS connects to Azure DNS Private Resolver to check for DNS Forwarding Rules associated with spoke 1 vnet.
-                If yes, the DNS query is scanned through DNS Forwarding Rules for a matching record, then it is forwarded (via Outbound Endpoint) to the IP address stated as part of the matching rule for DNS resolution.
-                If No, Azure DNS is contacted if results are not found.
+- Since Azure Provided DNS is configured on the spoke VNets, any DNS queries from the spokes will be directed to Azure Public DNS.
+- Azure Private DNS is contacted if a query is made for name resolution
+- Else, Azure DNS connects to Azure DNS Private Resolver to check for DNS Forwarding Rules associated with spoke 1 vnet.
+- If yes, the DNS query is scanned through DNS Forwarding Rules for a matching record, then it is forwarded (via Outbound Endpoint) to the IP address stated as part of the matching rule for DNS resolution.
+- If No, Azure DNS is contacted if results are not found.
                 
                 
-<sub> Note: Each DNS forwarding rule specifies one or more target DNS servers that are to be used for conditional forwarding, including the Domain Name, Target IP, and Port. </sub>
+Note: Each DNS forwarding rule specifies one or more target DNS servers that are to be used for conditional forwarding, including the Domain Name, Target IP, and Port.
 
 
 
@@ -130,10 +130,10 @@ The following resources provide more information about creating a private DNS re
 
 ## Scalability
 
-Azure DNS Private Resolver is a fully managed Microsoft service that can handle millions of requests. The minimum subnet address space must be /28, up to /24. So please set the size accordingly (/26 is a sweet spot for most users).
+Azure DNS Private Resolver is a fully managed Microsoft service that can handle millions of requests. The minimum subnet address space must be /28, up to /24. So do set the size accordingly (/26 is a sweet spot for most customers).
 
 
-## Restrictions
+## Guidelines
 
 Following are some guidelines for virtual networks:
 
@@ -157,7 +157,7 @@ Domain Name System Security Extensions are not currently supported by Azure DNS.
 
 Overview of how reverse DNS works, and scenarios in which Azure DNS supports , are provided in this [article.](https://docs.microsoft.com/en-us/azure/dns/dns-reverse-dns-overview)
 
-Traditionally, DNS records map a DNS name to an IP address, for example www.contoso.com resolves to 64.4.6.100. Reverse DNS is the opposite, where an IP address is mapped back to a name. For example, a lookup of 64.4.6.100 resolves to www.contoso.com.
+Traditionally, DNS records map a DNS name to an IP address, for example www.contoso.com resolves to 42.3.10.170. Reverse DNS is the opposite, where an IP address is mapped back to a name. For example, a lookup of 42.3.10.170 resolves to www.contoso.com.
 
 
 # Next steps
