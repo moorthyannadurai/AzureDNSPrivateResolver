@@ -48,27 +48,35 @@ Following are the components that comprise the architecture:
 
 On-premises networks represent customer datacenters that are connected to Azure via either ExpressRoute or S2S VPN. The components of the on-premises network in this use case are as follows:
 
-- Local DNS servers. Both of these servers (192.168.0.1 and 192.168.0.2) have the DNS service installed and serve as resolvers/forwarders for all the computers inside the on-premises network.
+- __Local DNS servers:__ Both of these servers (192.168.0.1 and 192.168.0.2) have the DNS service installed and serve as resolvers/forwarders for all the computers inside the on-premises network.
 
-<sub>Note: The administrator must create all Local DNS and Azure endpoints on these servers. For this scenario, On-premises DNS servers have conditional forwarders configured for the blob and API private endpoint DNS zones, pointing to the Azure DNS Private Resolver Inbound connection (IP: 10.0.0.8) hosted within the hub VNet. </sub>
+Note: The administrator must create all Local DNS and Azure endpoints on these servers. For this scenario, On-premises DNS servers have conditional forwarders configured for the blob and API private endpoint DNS zones, pointing to the Azure DNS Private Resolver Inbound connection (IP: 10.0.0.8) hosted within the hub VNet.
 
 - App1.onprem.company.com - 192.168.0.8
 - App2.onprem.company.com - 192.168.0.9
 - blob.core.windows.net – 10.0.0.8 (DNS Forwarder record)
 - Azure-api.net – 10.0.0.8 (DNS Forwarder record)
 	
+	
 ## Hub Network.
 
-- Gateway. The hybrid connection to Azure is formed either by a VPN device or by an ExpressRoute connection.
-- The following parameters are configured for Azure DNS Private Resolver.
-         vNET: 10.0.0.0/24
-        Inbound Endpoint:
-        Subnet: 10.0.0.0/28
-        IP: 10.0.0.8
-        - Outbound Endpoint
-        Subnet: 10.0.0.16/28
-        IP: 10.0.0.19
-      For App1 and App2 DNS names, the DNS forwarding rule set is configured 
+- __Gateway:__ The hybrid connection to Azure is formed either by a VPN device or by an ExpressRoute connection.
+
+- The following parameters are configured for Azure DNS Private Resolver. adsfsdfdsf
+
+__Hub Virtual Network:__
+- vNET: 10.0.0.0/24
+
+__Inbound Endpoint:__
+
+- Subnet: 10.0.0.0/28
+- IP: 10.0.0.8
+
+__Outbound Endpoint:__
+
+- Subnet: 10.0.0.16/28
+- IP: 10.0.0.19
+- For App1 and App2 DNS names, the DNS forwarding rule set is configured
 
 
 - The hub VNet linked to the Private DNS zone names for Azure services (such as privatelink.blob.core.windows.net, as shown in the picture).
@@ -85,9 +93,9 @@ The following diagram shows the traffic flow when on-premises server triggers a 
  
  ![DPR Architecture](https://github.com/moorthyannadurai/AzureDNSPrivateResolver/blob/gh-pages/DPR%203.jpg)
  
-- On Prem servers query Azure Private DNS records (ex. blob.core.windows.net).
-- DNS query requests are sent to local DNS server (192.168.0.1 / 2) (all on-premises computers point to local DNS server (192.168.0.1))
-- Because of conditional forwarding on the local DNS server for blob.core.windows.net, the request is being sent to DNS Resolver 10.0.0.8.
+- On Prem servers query Azure Private DNS records (ex. abc.privatelink.blob.core.windows.net).
+- DNS query requests are sent to local DNS server (192.168.0.1 / 2) (all on-premises computers point to local DNS server (192.168.0.1 / 2))
+- Because of conditional forwarding on the local DNS server for privatelink.blob.core.windows.net, the request is being sent to Private DNS Resolver Inbound Endpoint IP 10.0.0.8.
 - Azure Private DNS resolves DNS queries sent to DNS Resolvers' inbound endpoint through Azure Public DNS.
 
 
@@ -96,7 +104,7 @@ The following diagram shows the traffic flow when VM 1 triggers a DNS query. In 
 ![DPR Architecture](https://github.com/moorthyannadurai/AzureDNSPrivateResolver/blob/gh-pages/DPR%202.jpg)
 
 - One of the VMs (VM 1) queries a DNS record.
-- Since Azure Provided DNS is configured on the spoke VNets, any DNS queries from the spokes will be directed to Azure DNS
+- Since Azure Provided DNS is configured on the spoke VNets, any DNS queries from the spokes will be directed to Azure Public DNS
           Azure Private DNS is contacted if a query is made for name resolution
           Else, Azure DNS connects to Azure DNS Private Resolver to check for DNS Forwarding Rules associated with spoke 1 vnet.
                 If yes, the DNS query is scanned through DNS Forwarding Rules for a matching record, then it is forwarded (via Outbound Endpoint) to the IP address stated as part of the matching rule for DNS resolution.
