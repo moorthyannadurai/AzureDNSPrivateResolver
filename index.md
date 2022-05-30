@@ -38,7 +38,7 @@ Here are the features and key advantages that Azure DNS Private Resolver brings 
 # Architecture
 The following diagram illustrates how a hybrid network looks using Azure DNS Private Resolver:
 
-![DPR Architecture](https://github.com/moorthyannadurai/AzureDNSPrivateResolver/blob/gh-pages/DPR.jpg)
+![DPR Architecture](https://raw.githubusercontent.com/moorthyannadurai/AzureDNSPrivateResolver/gh-pages/DPR.jpg)
 
 
 # Components
@@ -91,7 +91,7 @@ __Outbound Endpoint:__
 
 The following diagram shows the traffic flow when on-premises server triggers a DNS query. In this case, a spoke network 1 attempt to resolve DNS.
  
- ![DPR Architecture](https://github.com/moorthyannadurai/AzureDNSPrivateResolver/blob/gh-pages/DPR%203.jpg)
+ ![DPR Architecture](https://raw.githubusercontent.com/moorthyannadurai/AzureDNSPrivateResolver/gh-pages/DPR%203.jpg)
  
 - On Prem servers query Azure Private DNS records (ex. abc.privatelink.blob.core.windows.net).
 - DNS query requests are sent to local DNS server (192.168.0.1 / 2) (all on-premises computers point to local DNS server (192.168.0.1 / 2))
@@ -101,7 +101,7 @@ The following diagram shows the traffic flow when on-premises server triggers a 
 
 The following diagram shows the traffic flow when VM 1 triggers a DNS query. In this case, a spoke network 1 attemp to resolve DNS.
 
-![DPR Architecture](https://github.com/moorthyannadurai/AzureDNSPrivateResolver/blob/gh-pages/DPR%202.jpg)
+![DPR Architecture](https://raw.githubusercontent.com/moorthyannadurai/AzureDNSPrivateResolver/gh-pages/DPR%202.jpg)
 
 - One of the VMs (VM 1) queries a DNS record.
 - Since Azure Provided DNS is configured on the spoke VNets, any DNS queries from the spokes will be directed to Azure Public DNS.
