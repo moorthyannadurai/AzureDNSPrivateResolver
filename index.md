@@ -8,7 +8,7 @@ Azure offers various types of DNS solutions, as described below:
 
 - __Azure Traffic manager:__ Acts as a DNS-based load balancing service, allowing us to distribute traffic across Azure regions to the public facing applications.
 
-- __Private DNS:__ You can use Azure DNS private zones to resolve your own domain names and virtual machine names without having to configure a custom solution without modifying your own configuration. When deploying, you can also use your own custom domain name instead of Azure's provided names if you use private DNS zones.
+- __Azure Private DNS:__ You can use Azure DNS private zones to resolve your own domain names and virtual machine names without having to configure a custom solution without modifying your own configuration. When deploying, you can also use your own custom domain name instead of Azure's provided names if you use private DNS zones.
 
 - __Azure DNS Resolver (Preview):__ is a cloud-native, highly available, and DevOps-friendly service. It provides a simple, zero-maintenance, reliable, and secure DNS service to resolve DNS names hosted in Azure DNS private zones 
 
