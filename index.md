@@ -1,21 +1,22 @@
-## Azure DNS Private Resolver
+# Azure DNS Private Resolver
 
 Microsoft has released new Azure DNS Private Resolver service to simplify hybrid recursive DNS resolution. This reference architecture demonstrates how a hybrid Domain Name System (DNS) solution can be designed using Microsoft Azure Private DNS Resolver for workloads running both on-premises and in Microsoft Azure.
 
 Azure offers various types of DNS solutions, as described below:
 
 Azure offers various types of DNS solutions, as described below:
-- Azure Public DNS: This is the default DNS resolution for all Azure virtual networks and it is maintained and managed by Microsoft.
+- __Azure Public DNS:__ This is the default DNS resolution for all Azure virtual networks and it is maintained and managed by Microsoft.
 
-- Azure Traffic manager: Acts as a DNS-based load balancing service, allowing us to distribute traffic across Azure regions to the public facing applications.
+- __Azure Traffic manager:__ Acts as a DNS-based load balancing service, allowing us to distribute traffic across Azure regions to the public facing applications.
 
-- Private DNS: You can use Azure DNS private zones to resolve your own domain names and virtual machine names without having to configure a custom solution without modifying your own configuration. When deploying, you can also use your own custom domain name instead of Azure's provided names if you use private DNS zones.
+- __Private DNS:__ You can use Azure DNS private zones to resolve your own domain names and virtual machine names without having to configure a custom solution without modifying your own configuration. When deploying, you can also use your own custom domain name instead of Azure's provided names if you use private DNS zones.
 
-- Azure DNS Resolver (Preview): is a cloud-native, highly available, and DevOps-friendly service. It provides a simple, zero-maintenance, reliable, and secure DNS service to resolve DNS names hosted in Azure DNS private zones 
+- __Azure DNS Resolver (Preview):__ is a cloud-native, highly available, and DevOps-friendly service. It provides a simple, zero-maintenance, reliable, and secure DNS service to resolve DNS names hosted in Azure DNS private zones 
 
 
 
-### Why Azure DNS Private Resolver:
+# Why Azure DNS Private Resolver:
+
 Prior to Azure DNS Private Resolver, customers must set up custom DNS servers to enable DNS resolution from on-premises to Azure (and vice versa). Below are the typical challenges associated with custom DNS solutions.
 
 - Managing multiple custom DNS servers for multiple virtual networks requires high infrastructure and licensing costs.
@@ -34,40 +35,131 @@ Here are the features and key advantages that Azure DNS Private Resolver brings 
 - The Outbound Endpoint brings conditional forwarding capability for Azure DNS to on-premises that has never been possible before.
 
 
+# Architecture
+The following diagram illustrates how a hybrid network looks using Azure DNS Private Resolver:
 
 
-You can use the [editor on GitHub](https://github.com/moorthyannadurai/AzureDNSPrivateResolver/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+# Components
+Following are the components that comprise the architecture:
 
-### Markdown
+## On-premises network. 
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+On-premises networks represent customer datacenters that are connected to Azure via either ExpressRoute or S2S VPN. The components of the on-premises network in this use case are as follows:
 
-```markdown
-Syntax highlighted code block
+- Local DNS servers. Both of these servers (192.168.0.1 and 192.168.0.2) have the DNS service installed and serve as resolvers/forwarders for all the computers inside the on-premises network.
 
-# Header 1
-## Header 2
-### Header 3
+<sub>Note: The administrator must create all Local DNS and Azure endpoints on these servers. For this scenario, On-premises DNS servers have conditional forwarders configured for the blob and API private endpoint DNS zones, pointing to the Azure DNS Private Resolver Inbound connection (IP: 10.0.0.8) hosted within the hub VNet. </sub>
 
-- Bulleted
-- List
+- App1.onprem.company.com - 192.168.0.8
+- App2.onprem.company.com - 192.168.0.9
+- blob.core.windows.net – 10.0.0.8 (DNS Forwarder record)
+- Azure-api.net – 10.0.0.8 (DNS Forwarder record)
+	
+## Hub Network.
 
-1. Numbered
-2. List
+- Gateway. The hybrid connection to Azure is formed either by a VPN device or by an ExpressRoute connection.
+- The following parameters are configured for Azure DNS Private Resolver.
+         vNET: 10.0.0.0/24
+        Inbound Endpoint:
+        Subnet: 10.0.0.0/28
+        IP: 10.0.0.8
+        - Outbound Endpoint
+        Subnet: 10.0.0.16/28
+        IP: 10.0.0.19
+      For App1 and App2 DNS names, the DNS forwarding rule set is configured 
 
-**Bold** and _Italic_ and `Code` text
 
-[Link](url) and ![Image](src)
-```
+- The hub VNet linked to the Private DNS zone names for Azure services (such as privatelink.blob.core.windows.net, as shown in the picture).
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+## Spoke Networks.
+- Virtual machines are hosted in all spoke networks in order to test and validate DNS resolution
+- All Azure spoke VNets use the default Azure provided DNS (192.63.129.16) and peered with hub VNet.
+- As shown in the picture, these spoke VNets are linked to Private DNS zone names to resolve private endpoint link services (such as privatelink.blob.core.windows.net).
 
-### Jekyll Themes
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/moorthyannadurai/AzureDNSPrivateResolver/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+## Traffic Flow
 
-### Support or Contact
+The following diagram shows the traffic flow when on-premises server triggers a DNS query. In this case, a spoke network 1 attempt to resolve DNS.
+ 
+- On Prem servers query Azure Private DNS records (ex. blob.core.windows.net).
+- DNS query requests are sent to local DNS server (192.168.0.1 / 2) (all on-premises computers point to local DNS server (192.168.0.1))
+- Because of conditional forwarding on the local DNS server for blob.core.windows.net, the request is being sent to DNS Resolver 10.0.0.8.
+- Azure Private DNS resolves DNS queries sent to DNS Resolvers' inbound endpoint through Azure Public DNS.
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+
+The following diagram shows the traffic flow when VM 1 triggers a DNS query. In this case, a spoke network 1 attemp to resolve DNS.
+
+
+- One of the VMs (VM 1) queries a DNS record.
+- Since Azure Provided DNS is configured on the spoke VNets, any DNS queries from the spokes will be directed to Azure DNS
+          Azure Private DNS is contacted if a query is made for name resolution
+          Else, Azure DNS connects to Azure DNS Private Resolver to check for DNS Forwarding Rules associated with spoke 1 vnet.
+                If yes, the DNS query is scanned through DNS Forwarding Rules for a matching record, then it is forwarded (via Outbound Endpoint) to the IP address stated as part of the matching rule for DNS resolution.
+                If No, Azure DNS is contacted if results are not found.
+                
+                
+<sub> Note: Each DNS forwarding rule specifies one or more target DNS servers that are to be used for conditional forwarding, including the Domain Name, Target IP, and Port. </sub>
+
+
+
+## Considerations
+
+The following points should be taken into account when implementing this solution:
+
+## Planning
+
+The following resources provide more information about creating a private DNS resolver:
+- Create an [Azure DNS Private Resolver using the Azure portal](https://docs.microsoft.com/en-us/azure/dns/dns-private-resolver-get-started-portal)
+- Create an [Azure DNS Private Resolver using Azure PowerShell](https://docs.microsoft.com/en-us/azure/dns/dns-private-resolver-get-started-powershell)
+
+
+
+
+## Scalability
+
+Azure DNS Private Resolver is a fully managed Microsoft service that can handle millions of requests. The minimum subnet address space must be /28, up to /24. So please set the size accordingly (/26 is a sweet spot for most users).
+
+
+## Restrictions
+
+Following are some guidelines for virtual networks:
+
+- Azure DNS Private resolvers can only resolve virtual networks within the same geographical region.
+- A virtual network cannot contain more than one DNS resolver. There can only be one resolver per virtual network.
+- Dedicated subnets should be assigned to each of the inbound and outbound endpoints. 
+
+## Regional Availability
+
+Azure DNS Private Resolver service is available in the regions listed [here](https://docs.microsoft.com/en-us/azure/dns/dns-private-resolver-overview#regional-availability). 
+Note: A DNS resolver can only refer to a virtual network in the same region as the DNS resolver.
+
+## Security
+
+Azure DNS supports the extended ASCII encoding set for TXT record sets. Further information is available here.
+
+Domain Name System Security Extensions are not currently supported by Azure DNS. This is one of the feature requests on the new feature request [page](https://docs.microsoft.com/en-us/azure/dns/dns-faq#does-azure-dns-support-the-extended-ascii-encoding--8-bit--set-for-txt-record-sets-).
+
+
+## Reverse DNS Support
+
+Overview of how reverse DNS works, and scenarios in which Azure DNS supports , are provided in this [article.](https://docs.microsoft.com/en-us/azure/dns/dns-reverse-dns-overview)
+
+Traditionally, DNS records map a DNS name to an IP address, for example www.contoso.com resolves to 64.4.6.100. Reverse DNS is the opposite, where an IP address is mapped back to a name. For example, a lookup of 64.4.6.100 resolves to www.contoso.com.
+
+
+## Next steps
+
+
+[What is a virtual network link?](https://docs.microsoft.com/en-us/azure/dns/private-dns-virtual-network-links)
+
+[What is Azure DNS?](https://docs.microsoft.com/en-us/azure/dns/dns-overview)
+
+[What is Azure Private DNS?](https://docs.microsoft.com/en-us/azure/dns/private-dns-overview)
+
+[What is Azure DNS Private Resolver?](https://docs.microsoft.com/en-us/azure/dns/dns-private-resolver-overview)
+
+[zure DNS FAQ](https://docs.microsoft.com/en-us/azure/dns/dns-faq)
+
+[Overview of reverse DNS](https://docs.microsoft.com/en-us/azure/dns/dns-reverse-dns-overview)
+
