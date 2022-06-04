@@ -151,6 +151,17 @@ Azure DNS supports the extended ASCII encoding set for TXT record sets. Further 
 
 Domain Name System Security Extensions are not currently supported by Azure DNS. This is one of the feature requests on the new feature request [page](https://docs.microsoft.com/en-us/azure/dns/dns-faq#does-azure-dns-support-the-extended-ascii-encoding--8-bit--set-for-txt-record-sets-).
 
+## Pricing 
+
+- As a solution, Azure DNS Private Resolver is largely cost-effective. One of the primary benefits of Azure DNS Private Resolver is it is fully managed, eliminating the need for dedicated servers. 
+
+- Calculate the cost of Azure DNS Private Resolver using the [Azure pricing calculator](https://azure.microsoft.com/pricing/calculator/). Pricing models for Azure DNS Private Resolver are explained [here](https://azure.microsoft.com/en-in/pricing/details/dns/). 
+
+- Pricing also includes availability and scalability features. 
+
+- Azure [ExpressRoute](https://azure.microsoft.com/pricing/details/expressroute/) supports two billing models: metered data, which charges you per GB for data transfer outbound, or unlimited data, which includes all data transfer. 
+
+- When using [VPN](https://azure.microsoft.com/pricing/details/vpn-gateway/) instead of ExpressRoute, the cost varies by the SKU and is charged per hour. 
 
 ## Reverse DNS Support
 
